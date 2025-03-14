@@ -1,96 +1,72 @@
-import React, { useState } from "react";
+import { FragmentContext } from "../store";
+import { useContext, useState, useRef } from "react";
 
-const DisplayFood = ({ item, index, handleOnClick }) => {
+const DisplayFood = () => {
+  const { healthyFoods } = useContext(FragmentContext);
   return (
-    <div className="p-1 font-extrabold bg-gray-800 uppercase text-white rounded-3xl flex items-center justify-between px-10">
-      <div className="flex gap-2 items-center">
-        <p className="text-orange-400">{index + 1}</p>
-        <p>{item}</p>
+    <>
+      <div className="flex flex-col gap-2  max-h-[500px] overflow-y-auto ">
+        {healthyFoods.map((item, index) => (
+          <div
+            key={index}
+            className="p-1 font-extrabold bg-gray-800 uppercase text-white rounded-3xl flex items-center justify-between px-10"
+          >
+            <div className="flex gap-2 items-center">
+              <p className="p-2">{item}</p>
+            </div>
+          </div>
+        ))}
       </div>
-
-      <button
-        className="text-sm bg-orange-400 p-3 text-black rounded-full uppercase cursor-pointer"
-        onClick={() => handleOnClick(item)}
-      >
-        Buy
-      </button>
-    </div>
+    </>
   );
 };
 
-const AddItem = ({ handleOnAdd, setFoodName, foodName }) => {
+const AddItem = () => {
+  const { handleOnAdd, foodNameRef } = useContext(FragmentContext);
   return (
-    <div className="w-full flex justify-around gap-3 bg-white rounded-full px-10 py-2 mt-3 ">
+    <div className="w-full flex justify-around gap-3 bg-white rounded-full px-10 py-2 mt-3  mb-10">
       <input
         className="text-black py-1 px-5 font-extrabold outline-none border-none flex-1"
         type="text"
         placeholder="Add food item..."
-        value={foodName}
-        onChange={(event) => setFoodName(event.target.value)}
+        ref={foodNameRef}
         autoFocus
-      />
-      <button
-        className="bg-orange-400 p-3 rounded-full cursor-pointer"
-        onClick={() => {
-          if (foodName.trim() !== "") {
-            handleOnAdd(foodName);
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            handleOnAdd(foodNameRef.current.value);
           }
         }}
-      >
-        Add
-      </button>
+      />
     </div>
   );
 };
 
-const Fragments = () => {
-  const [healthyFoods, setHealthyFoods] = useState([
-    "apple",
-    "banana",
-    "carrot",
-    "green leafy vegetables",
-    "watermelon",
-    "orange",
-    "milk",
-  ]);
-  const [foodName, setFoodName] = useState("");
-
-  const handleOnClick = (value) => {
-    console.log("Buying:", value);
-  };
-
-  const handleOnAdd = (value) => {
-    setHealthyFoods([...healthyFoods, value]);
-    setFoodName("");
-  };
-
+const OnEmpty = () => {
   return (
     <>
-      <div>
-        <h1 className="text-5xl font-extrabold text-orange-400">
-          Healthy Foods
-        </h1>
+      <p className="text-gray-600 text-3xl font-extrabold">I am still Hungry</p>
+    </>
+  );
+};
 
-        <div className="flex flex-col gap-3 mt-4 h-[500px] overflow-y-auto">
-          {healthyFoods.length === 0 && (
-            <p className="text-2xl font-bold text-red-500">I am still Hungry</p>
-          )}
-          {healthyFoods.map((item, index) => (
-            <DisplayFood
-              item={item}
-              index={index}
-              key={index}
-              handleOnClick={handleOnClick}
-            />
-          ))}
-        </div>
-      </div>
+const Fragments = () => {
+  const [healthyFoods, setHealthyFoods] = useState([]);
+  const foodNameRef = useRef(null);
 
-      <AddItem
-        handleOnAdd={handleOnAdd}
-        setFoodName={setFoodName}
-        foodName={foodName}
-      />
+  const handleOnAdd = (value) => {
+    if (value.trim() === "") return;
+    setHealthyFoods((prev) => [value, ...prev]);
+    foodNameRef.current.value = "";
+  };
+  return (
+    <>
+      <FragmentContext.Provider
+        value={{ healthyFoods, handleOnAdd, foodNameRef }}
+      >
+        <AddItem />
+        {healthyFoods.length === 0 && <OnEmpty />}
+        {healthyFoods.length !== 0 && <DisplayFood />}
+      </FragmentContext.Provider>
     </>
   );
 };

@@ -34,23 +34,38 @@ const Calculator = () => {
     "=",
   ];
 
+  const [result, setResult] = useState("");
+
   const setResultValue = (value) => {
-    if (value === "AC") {
-      setResult("");
-    } else if (value === "=") {
-      try {
-        setResult(eval(result).toString());
-      } catch {
-        setResult("Error");
+    if (result !== "Error") {
+      if (value === "AC") {
+        setResult("");
+      } else if (value === "=") {
+        if (result === "Error") {
+          setResult("");
+        } else if (result == 0) {
+          setResult(0);
+        } else {
+          try {
+            setResult(eval(result).toString());
+          } catch {
+            setResult("Error");
+          }
+        }
+      } else if (value === "C") {
+        if (result === "Error") {
+          setResult("");
+        } else {
+          setResult(result.slice(0, -1));
+        }
+      } else {
+        setResult((prev) => prev + value);
       }
-    } else if (value === "C") {
-      setResult(result.slice(0, -1));
     } else {
-      setResult((prev) => prev + value);
+      setResult(value);
     }
   };
 
-  const [result, setResult] = useState("");
   return (
     <>
       <div className="">
@@ -65,7 +80,7 @@ const Calculator = () => {
         ))}
       </div>
 
-      <p className="bg-orange-400 font-bold text-center mt-4 rounded text-black">
+      <p className="bg-orange-400 font-bold text-center mt-4 py-3 rounded text-black">
         Pradeep
       </p>
     </>
