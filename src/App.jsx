@@ -6,11 +6,16 @@ import {
   Todo,
   Fragments,
   TodoCopy,
+  SocialMedia,
 } from "../src";
 
 function App() {
   return (
     <>
+      <div className="">
+        <SocialMedia />
+      </div>
+
       {/* <div className="bg-black mt-10 w-1/2 p-10 text-white  mx-auto rounded-xl text-center  ">
         <TodoCopy />
       </div> */}
@@ -18,9 +23,9 @@ function App() {
         <Todo />
       </div> */}
 
-      <div className="bg-black  mt-10 w-[70%] p-10 text-white  mx-auto rounded-xl text-center ">
+      {/* <div className="bg-black  mt-10 w-[70%] p-10 text-white  mx-auto rounded-xl text-center ">
         <Clock />
-      </div>
+      </div> */}
 
       {/* <div className="bg-black   mt-10 w-1/3 p-10 text-white  mx-auto rounded-xl text-center  ">
         <Fragments />
